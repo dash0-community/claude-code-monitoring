@@ -1,0 +1,36 @@
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:4317
+
+exporters:
+  debug:
+    verbosity: detailed
+
+  otlp_http/prometheus:
+    endpoint: http://prometheus:9090/api/v1/otlp
+    tls:
+      insecure: true
+
+  otlp_grpc/jaeger:
+    endpoint: jaeger:4317
+    tls:
+      insecure: true
+
+  otlp_grpc/data_prepper:
+    endpoint: data-prepper:21893
+    tls:
+      insecure: true
+
+service:
+  pipelines:
+    traces:
+      receivers: [otlp]
+      exporters: [debug, otlp_grpc/jaeger]
+    logs/claude:
+      receivers: [otlp]
+      exporters: [debug, otlp_grpc/data_prepper]
+    metrics/claude:
+      receivers: [otlp]
+      exporters: [debug, otlp_http/prometheus]
