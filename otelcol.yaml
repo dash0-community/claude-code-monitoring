@@ -25,12 +25,12 @@ exporters:
 
 service:
   pipelines:
+    metrics:
+      receivers: [otlp]
+      exporters: [debug, otlp_http/prometheus]
+    logs:
+      receivers: [otlp]
+      exporters: [debug, otlp_grpc/data_prepper]
     traces:
       receivers: [otlp]
       exporters: [debug, otlp_grpc/jaeger]
-    logs/claude:
-      receivers: [otlp]
-      exporters: [debug, otlp_grpc/data_prepper]
-    metrics/claude:
-      receivers: [otlp]
-      exporters: [debug, otlp_http/prometheus]
