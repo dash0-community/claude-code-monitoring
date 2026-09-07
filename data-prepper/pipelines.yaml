@@ -10,3 +10,19 @@ otlp-logs-pipeline:
         hosts: ["http://opensearch:9200"]
         index: "otel-logs"
         insecure: true
+        # ponytail: attributes mapped as flattened so dotted keys (e.g. "prompt.id")
+        # can't collide with sibling scalar keys (e.g. "prompt") via OpenSearch's
+        # dot-to-nested-object expansion; upgrade to explicit per-field mappings
+        # if you need numeric/keyword aggregations on specific attributes.
+        template_type: "index-template"
+        template_content: |
+          {
+            "index_patterns": ["otel-logs*"],
+            "template": {
+              "mappings": {
+                "properties": {
+                  "attributes": { "type": "flat_object" }
+                }
+              }
+            }
+          }
